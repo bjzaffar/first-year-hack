@@ -28,7 +28,7 @@ The built server also serves `dist/client` at the API port. Development uses Vit
 | Root configs, package manifests/lockfile, CI | Integration; coordinate changes in issue #2 |
 | Real recipe IDs, parameter bounds, operations | T003 publishes evidence and contract additions before T005/T006 consume |
 
-Future geometry/compiler code belongs in a trusted TypeScript module (proposed `src/geometry/`), renderer code in the client. No executable formulas, scripts or arbitrary operations may arrive through requests or model JSON. The synthetic hinge contract is the only registered domain; it does not authorize exposing a real recipe. T003 must explicitly extend schemas after feasibility evidence. Provider/compiler interfaces are defined now but no implementations are claimed.
+Future geometry/compiler code belongs in a trusted TypeScript module (proposed `src/geometry/`), renderer code in the client. No executable formulas, scripts or arbitrary operations may arrive through requests or model JSON. The synthetic hinge contract is the only registered domain; it does not authorize exposing a real recipe. T003 must explicitly extend schemas after feasibility evidence. The provider interface has a standalone [T004 Ollama implementation](ollama.md); the compiler remains unimplemented and live API orchestration is still deferred to T008.
 
 ## State, errors and limitations
 

@@ -37,8 +37,8 @@ No formatter/linter has been selected; typecheck is not a substitute for a futur
 | --- | --- | --- |
 | `API_PORT` | `3001` | Local server and Vite proxy; `.env` or process environment |
 | `WEB_PORT` | `5173` | Vite listener; `.env` or process environment |
-| `OLLAMA_URL` | placeholder `http://127.0.0.1:11434` | Server-only future provider configuration, currently unused |
-| `OLLAMA_MODEL` | placeholder `qwen3-vl:4b` | Server-only future provider configuration, currently unused |
+| `OLLAMA_URL` | placeholder `http://127.0.0.1:11434` | Server-only adapter/benchmark configuration; API orchestration remains T008 |
+| `OLLAMA_MODEL` | placeholder `qwen3-vl:4b` | Server-only adapter/benchmark configuration; API orchestration remains T008 |
 
 No variables use a public `VITE_` prefix. Vite loads configuration to set its proxy but does not expose server configuration to the browser. Credentials are never required for fixtures. Services use no persisted photos or tutorial data, browser storage, request-body logs or database.
 
@@ -71,6 +71,10 @@ Expect 200 with generationReady false, 200 with tutorial.synthetic true, then 40
 Observed locally on Node 26.13.0 / npm 11.20.0: `npm ci` succeeded (154 packages, zero reported vulnerabilities), `npm run typecheck` and `npm run build` passed, and `npm test` passed all 16 tests. `python3 scripts/check_template.py` and `git diff --check` passed. HTTP tests required permission to bind loopback outside the sandbox; the initial sandbox-only attempt failed with EPERM.
 
 Default ports were occupied, so development startup used `API_PORT=43171 WEB_PORT=43172 npm run dev`. HTTP smoke checks confirmed the browser HTML, transformed React module, proxied health, and labelled fixture response. `API_PORT=43173 npm start` served built HTML and health successfully. Existing processes on default ports were not stopped. Browser automation host was unavailable, so button interaction/visual checks remain unverified. CI's Node 24 run is pending the PR. No inference, complete user journey, geometry compiler or physical folding was tested.
+
+## Local photo analysis
+
+T004 adds a standalone server-side AnalysisProvider and explicit benchmark CLI. See [Ollama setup and integration](ollama.md) and [measured latency/quality results](ollama-benchmark.md). The tested setup sets OLLAMA_MODEL=qwen3-vl:4b-instruct explicitly; generic tags currently point to thinking variants. App fixture startup still needs no model, and the live tutorial API remains unavailable pending compiler/orchestration integration.
 
 ## T007 frontend review fixes
 
