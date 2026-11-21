@@ -1,6 +1,7 @@
 import {
   masuBoxDimensions,
   masuFlatNet,
+  masuFoldedLayout,
   masuNorthWestCornerCompatibility,
   masuNorthWallEdgeLengths,
   masuNorthWallMotion,
@@ -15,6 +16,7 @@ const close = (a: number, b: number) => Math.abs(a - b) < 1e-10;
 for (const wallHeightFraction of samples) {
   const dimensions = masuBoxDimensions(paperEdge, { wallHeightFraction });
   const net = masuFlatNet(dimensions);
+  const foldedLayout = masuFoldedLayout(dimensions, net);
   const netAreaCorrect = close(net.area, paperEdge ** 2);
   const netInsideSheet = net.vertices.every(vertex => vertex.x >= -1e-10 && vertex.x <= paperEdge + 1e-10 &&
     vertex.y >= -1e-10 && vertex.y <= paperEdge + 1e-10);
@@ -30,8 +32,10 @@ for (const wallHeightFraction of samples) {
   const corner = masuNorthWestCornerCompatibility(dimensions);
   const independentWallsRequireCompoundCollapse = close(corner.mismatch, Math.SQRT2 * dimensions.wallHeight) &&
     corner.mismatch > 0;
-  if (net.faces.length !== 17 || !netAreaCorrect || !netInsideSheet ||
-      !rigidThroughout || !axisFixed || !endpointIsCorrect || !independentWallsRequireCompoundCollapse) {
+  if (net.faces.length !== 29 || !netAreaCorrect || !netInsideSheet ||
+      !rigidThroughout || !axisFixed || !endpointIsCorrect || !independentWallsRequireCompoundCollapse ||
+      !foldedLayout.edgeLengthPreserved || !foldedLayout.everyFaceNondegenerate ||
+      !foldedLayout.tipTrianglesTileFloor || !foldedLayout.wallBandPairsCoincide || !foldedLayout.cornerLayerGroupsCoincide) {
     throw new Error(`Hinge invariant failed at wallHeightFraction=${wallHeightFraction}`);
   }
   console.log(JSON.stringify({
@@ -45,6 +49,13 @@ for (const wallHeightFraction of samples) {
     uprightWallVertices: upright.movingVertices,
     uprightEdgeLengths: masuNorthWallEdgeLengths(upright),
     naiveNorthWestCorner: { ...corner, independentWallsRequireCompoundCollapse },
+    finalLayoutChecks: {
+      edgeLengthPreserved: foldedLayout.edgeLengthPreserved,
+      everyFaceNondegenerate: foldedLayout.everyFaceNondegenerate,
+      tipTrianglesTileFloor: foldedLayout.tipTrianglesTileFloor,
+      wallBandPairsCoincide: foldedLayout.wallBandPairsCoincide,
+      cornerLayerGroupsCoincide: foldedLayout.cornerLayerGroupsCoincide,
+    },
     checks: { positiveBase: dimensions.baseSide > 0, flatNetArea: netAreaCorrect, netInsideSheet,
       fixedHingeAxis: axisFixed, rigidWallThroughout: rigidThroughout, uprightEndpoint: endpointIsCorrect },
   }));

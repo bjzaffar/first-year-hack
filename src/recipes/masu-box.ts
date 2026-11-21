@@ -61,7 +61,7 @@ export interface MasuNetVertex extends Point3 {
 
 export interface MasuNetFace {
   id: string;
-  role: 'floor' | 'wall' | 'corner-gusset' | 'rim-flap';
+  role: 'floor' | 'wall' | 'corner-gusset' | 'rim-flap' | 'rim-tip';
   vertexIds: readonly string[];
 }
 
@@ -75,7 +75,7 @@ export interface MasuNetEdge {
 
 export const MasuNetVertexSchema = z.strictObject({ id, u: finite, v: finite, x: finite, y: finite, z: finite });
 export const MasuNetFaceSchema = z.strictObject({
-  id, role: z.enum(['floor', 'wall', 'corner-gusset', 'rim-flap']), vertexIds: z.array(id).min(3),
+  id, role: z.enum(['floor', 'wall', 'corner-gusset', 'rim-flap', 'rim-tip']), vertexIds: z.array(id).min(3),
 });
 export const MasuNetEdgeSchema = z.strictObject({
   id, vertexIds: z.tuple([id, id]), faceIds: z.array(id).min(1).max(2),
@@ -172,7 +172,7 @@ export type MasuFlatNet = z.infer<typeof MasuFlatNetSchema>;
 /** Build a candidate flat panel partition in the rotated (u,v) frame; it is not yet a verified Masu crease pattern. */
 export function masuFlatNet(dimensions: MasuBoxDimensions): MasuFlatNet {
   const l = dimensions.paperEdge, s = dimensions.baseSide;
-  const R = l / Math.SQRT2, q = R / 2;
+  const R = l / Math.SQRT2, q = R / 2, q2 = q + dimensions.wallHeight;
   const points: Record<string, readonly [number, number]> = {
     'base-nw': [-s / 2, s / 2], 'base-ne': [s / 2, s / 2],
     'base-se': [s / 2, -s / 2], 'base-sw': [-s / 2, -s / 2],
@@ -187,6 +187,10 @@ export function masuFlatNet(dimensions: MasuBoxDimensions): MasuFlatNet {
     'corner-sw-in-west': [-s / 2 - dimensions.wallHeight, -s / 2],
     'corner-sw-in-south': [-s / 2, -s / 2 - dimensions.wallHeight],
     'paper-n': [0, R], 'paper-e': [R, 0], 'paper-s': [0, -R], 'paper-w': [-R, 0],
+    'flap-nw': [-s / 2, q2], 'flap-ne': [s / 2, q2],
+    'flap-en': [q2, s / 2], 'flap-es': [q2, -s / 2],
+    'flap-se': [s / 2, -q2], 'flap-sw': [-s / 2, -q2],
+    'flap-ws': [-q2, -s / 2], 'flap-wn': [-q2, s / 2],
   };
   const vertices: MasuNetVertex[] = Object.entries(points).map(([id, [u, v]]) => ({
     id, u, v, x: l / 2 + (u + v) / Math.SQRT2, y: l / 2 + (u - v) / Math.SQRT2, z: 0,
@@ -213,10 +217,22 @@ export function masuFlatNet(dimensions: MasuBoxDimensions): MasuFlatNet {
     face('gusset-se-b', 'corner-gusset', ['base-se', 'outer-se', 'corner-se-in-east']),
     face('gusset-sw-a', 'corner-gusset', ['base-sw', 'corner-sw-in-west', 'outer-sw']),
     face('gusset-sw-b', 'corner-gusset', ['base-sw', 'outer-sw', 'corner-sw-in-south']),
-    face('rim-flap-north', 'rim-flap', ['outer-nw', 'corner-nw-in-north', 'corner-ne-in-north', 'outer-ne', 'paper-n']),
-    face('rim-flap-east', 'rim-flap', ['outer-ne', 'corner-ne-in-east', 'corner-se-in-east', 'outer-se', 'paper-e']),
-    face('rim-flap-south', 'rim-flap', ['outer-se', 'corner-se-in-south', 'corner-sw-in-south', 'outer-sw', 'paper-s']),
-    face('rim-flap-west', 'rim-flap', ['outer-sw', 'corner-sw-in-west', 'corner-nw-in-west', 'outer-nw', 'paper-w']),
+    face('rim-corner-nw', 'rim-flap', ['outer-nw', 'corner-nw-in-north', 'flap-nw']),
+    face('rim-band-north', 'rim-flap', ['corner-nw-in-north', 'corner-ne-in-north', 'flap-ne', 'flap-nw']),
+    face('rim-corner-ne', 'rim-flap', ['corner-ne-in-north', 'outer-ne', 'flap-ne']),
+    face('rim-corner-ne-east', 'rim-flap', ['outer-ne', 'corner-ne-in-east', 'flap-en']),
+    face('rim-band-east', 'rim-flap', ['corner-ne-in-east', 'corner-se-in-east', 'flap-es', 'flap-en']),
+    face('rim-corner-se', 'rim-flap', ['corner-se-in-east', 'outer-se', 'flap-es']),
+    face('rim-corner-se-south', 'rim-flap', ['outer-se', 'corner-se-in-south', 'flap-se']),
+    face('rim-band-south', 'rim-flap', ['corner-se-in-south', 'corner-sw-in-south', 'flap-sw', 'flap-se']),
+    face('rim-corner-sw', 'rim-flap', ['corner-sw-in-south', 'outer-sw', 'flap-sw']),
+    face('rim-corner-sw-west', 'rim-flap', ['outer-sw', 'corner-sw-in-west', 'flap-ws']),
+    face('rim-band-west', 'rim-flap', ['corner-sw-in-west', 'corner-nw-in-west', 'flap-wn', 'flap-ws']),
+    face('rim-corner-nw-west', 'rim-flap', ['corner-nw-in-west', 'outer-nw', 'flap-wn']),
+    face('rim-tip-north', 'rim-tip', ['flap-nw', 'flap-ne', 'paper-n']),
+    face('rim-tip-east', 'rim-tip', ['flap-en', 'flap-es', 'paper-e']),
+    face('rim-tip-south', 'rim-tip', ['flap-se', 'flap-sw', 'paper-s']),
+    face('rim-tip-west', 'rim-tip', ['flap-ws', 'flap-wn', 'paper-w']),
   ];
   const edgeMap = new Map<string, { vertexIds: [string, string]; faceIds: string[] }>();
   for (const currentFace of faces) {
@@ -242,6 +258,104 @@ export function masuFlatNet(dimensions: MasuBoxDimensions): MasuFlatNet {
     return total + Math.abs(twiceArea) / 2;
   }, 0);
   return MasuFlatNetSchema.parse({ sheetId: 'paper-1', paperEdge: l, vertices, faces, edges, area });
+}
+
+export interface MasuFoldedLayout {
+  faceVertices: Readonly<Record<string, readonly Point3[]>>;
+  edgeLengthPreserved: boolean;
+  everyFaceNondegenerate: boolean;
+  tipTrianglesTileFloor: boolean;
+  wallBandPairsCoincide: boolean;
+  cornerLayerGroupsCoincide: boolean;
+}
+
+/**
+ * Construct the rigid-panel endpoint implied by the generalized Masu dimensions.
+ * This verifies congruent panel placement and intended layer coincidences; it
+ * does not claim a continuous collision-free route to the endpoint.
+ */
+export function masuFoldedLayout(dimensions: MasuBoxDimensions, net = masuFlatNet(dimensions)): MasuFoldedLayout {
+  const { baseSide: s, wallHeight: h } = dimensions;
+  const cornerBase: Record<string, readonly [number, number]> = {
+    nw: [-s / 2, s / 2], ne: [s / 2, s / 2],
+    se: [s / 2, -s / 2], sw: [-s / 2, -s / 2],
+  };
+  const inward: Record<string, readonly [number, number]> = {
+    nw: [1, -1], ne: [-1, -1], se: [-1, 1], sw: [1, 1],
+  };
+  const landmark = (vertexId: string): Point3 | undefined => {
+    const baseName = /^base-(nw|ne|se|sw)$/.exec(vertexId)?.[1];
+    if (baseName) {
+      const [x, y] = cornerBase[baseName];
+      return { x, y, z: 0 };
+    }
+    const topName = /^corner-(nw|ne|se|sw)-in-(north|east|south|west)$/.exec(vertexId)?.[1];
+    if (topName) {
+      const [x, y] = cornerBase[topName];
+      return { x, y, z: h };
+    }
+    const outerName = /^outer-(nw|ne|se|sw)$/.exec(vertexId)?.[1];
+    if (outerName) {
+      const [x, y] = cornerBase[outerName], [dx, dy] = inward[outerName];
+      return { x: x + dx * h / Math.SQRT2, y: y + dy * h / Math.SQRT2, z: h };
+    }
+    const flapCorner: Record<string, string> = {
+      'flap-nw': 'nw', 'flap-wn': 'nw', 'flap-ne': 'ne', 'flap-en': 'ne',
+      'flap-es': 'se', 'flap-se': 'se', 'flap-sw': 'sw', 'flap-ws': 'sw',
+    };
+    if (flapCorner[vertexId]) {
+      const [x, y] = cornerBase[flapCorner[vertexId]];
+      return { x, y, z: 0 };
+    }
+    if (vertexId.startsWith('paper-')) return { x: 0, y: 0, z: 0 };
+    return undefined;
+  };
+  const original = new Map(net.vertices.map(vertex => [vertex.id, vertex]));
+  const faceVertices = Object.fromEntries(net.faces.map(face => [face.id, face.vertexIds.map(vertexId => {
+    const point = landmark(vertexId);
+    if (!point) throw new Error(`No folded-layout landmark mapping for ${vertexId}`);
+    return point;
+  })]));
+  const edgeLengthPreserved = net.faces.every(face => face.vertexIds.every((vertexId, index) => {
+    const a = original.get(vertexId)!, b = original.get(face.vertexIds[(index + 1) % face.vertexIds.length])!;
+    const folded = faceVertices[face.id];
+    const c = folded[index], d = folded[(index + 1) % folded.length];
+    return closeTo(Math.hypot(a.u - b.u, a.v - b.v), Math.hypot(c.x - d.x, c.y - d.y, c.z - d.z), dimensions.paperEdge);
+  }));
+  const everyFaceNondegenerate = Object.values(faceVertices).every(vertices => {
+    const origin = vertices[0];
+    let areaVector = { x: 0, y: 0, z: 0 };
+    for (let i = 1; i < vertices.length - 1; i++) {
+      const a = vertices[i], b = vertices[i + 1];
+      const ax = a.x - origin.x, ay = a.y - origin.y, az = a.z - origin.z;
+      const bx = b.x - origin.x, by = b.y - origin.y, bz = b.z - origin.z;
+      areaVector.x += ay * bz - az * by;
+      areaVector.y += az * bx - ax * bz;
+      areaVector.z += ax * by - ay * bx;
+    }
+    return Math.hypot(areaVector.x, areaVector.y, areaVector.z) > 1e-12;
+  });
+  const tips = ['north', 'east', 'south', 'west'].map(side => faceVertices[`rim-tip-${side}`]);
+  const tipArea = tips.reduce((total, vertices) => {
+    const [a, b, c] = vertices;
+    return total + Math.abs((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) / 2;
+  }, 0);
+  const tipTrianglesTileFloor = closeTo(tipArea, s * s, dimensions.paperEdge);
+  const wallBandPairsCoincide = ['north', 'east', 'south', 'west'].every(side => {
+    const wall = faceVertices[`wall-${side}`], band = faceVertices[`rim-band-${side}`];
+    return wall.length === band.length && wall.every(point => band.some(other => closeTo(point.x, other.x, dimensions.paperEdge) &&
+      closeTo(point.y, other.y, dimensions.paperEdge) && closeTo(point.z, other.z, dimensions.paperEdge)));
+  });
+  const cornerLayerGroupsCoincide = ['nw', 'ne', 'se', 'sw'].every(corner => {
+    const ids = [`gusset-${corner}-a`, `gusset-${corner}-b`, ...net.faces
+      .filter(face => face.id.startsWith('rim-corner-') && face.vertexIds.includes(`outer-${corner}`))
+      .map(face => face.id)];
+    const shapes = ids.map(faceId => faceVertices[faceId].map(point =>
+      `${point.x.toFixed(9)},${point.y.toFixed(9)},${point.z.toFixed(9)}`).sort().join('|'));
+    return shapes.length === 4 && shapes.every(shape => shape === shapes[0]);
+  });
+  return { faceVertices, edgeLengthPreserved, everyFaceNondegenerate, tipTrianglesTileFloor,
+    wallBandPairsCoincide, cornerLayerGroupsCoincide };
 }
 
 export interface NorthWallMotion {
