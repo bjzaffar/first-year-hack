@@ -6,6 +6,7 @@ import { GenerationStates } from './GenerationStates.js';
 import { Preview } from './Preview.js';
 import { Prepare } from './Prepare.js';
 import { TutorialPlayer } from './TutorialPlayer.js';
+import { PaperBackground } from './PaperBackground.js';
 import './style.css';
 
 type AppPhase = 'upload' | 'generating' | 'preview' | 'prepare' | 'tutorial' | 'finish' | 'error';
@@ -78,6 +79,8 @@ function App() {
   }, []);
 
   return (
+    <>
+    <PaperBackground />
     <main>
       <header className="studio-header">
         <a className="wordmark" href="/" aria-label="FoldLens home"><span aria-hidden="true" className="fold-mark">◇</span> FoldLens<span className="wordmark-dot">.</span></a>
@@ -157,6 +160,7 @@ function App() {
         <span className="footer-brand">FoldLens</span><p>Made of paper. Shaped by curiosity.</p><small>Your progress lives in this session.</small>
       </footer>
     </main>
+    </>
   );
 }
 

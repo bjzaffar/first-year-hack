@@ -220,3 +220,7 @@ button.finish:hover { background: #ebcfb7; }
 .crop-handle-sw { left: -14px; bottom: -14px; cursor: nesw-resize; }
 .crop-handle-se { right: -14px; bottom: -14px; cursor: nwse-resize; }
 .crop-actions { margin-top: 28px; }
+
+/* Decorative only: faint at the edges, quieter still behind the reading area. */
+#root { isolation: isolate; }
+.paper-background { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; mask-image: linear-gradient(to right, #000, #0004 30%, #0004 70%, #000); }
