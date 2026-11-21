@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { cropPixels, type Crop } from './crop.js';
+import { CropSelection } from './CropSelection.js';
 
 export interface CroppedImage {
   dataUrl: string;
@@ -99,19 +100,12 @@ export function UploadCrop({ onCrop, onInvalidate, initialImage }: {
     {busy && <p role="status">Preparing image…</p>}
     {error && <p role="alert" className="error">{error}</p>}
     {source && <>
-      <div style={{ position: 'relative', width: 'fit-content', maxWidth: '100%' }}>
-        <img src={source} alt="Source photograph with selected crop" style={{ display: 'block', maxWidth: '100%', maxHeight: 360 }} />
-        <div aria-hidden="true" style={{ position: 'absolute', border: '2px solid #a85c30', boxSizing: 'border-box', pointerEvents: 'none',
-          left: `${crop.x}%`, top: `${crop.y}%`, width: `${crop.width}%`, height: `${crop.height}%` }} />
+      <CropSelection key={source} source={source} crop={crop} disabled={busy}
+        onChange={next => { onInvalidate(); setCrop(next); }} />
+      <div className="actions crop-actions">
+        <button disabled={busy} onClick={confirm}>Confirm crop</button>
+        <button disabled={busy} onClick={() => { onInvalidate(); setCrop({ x: 0, y: 0, width: 100, height: 100 }); }}>Reset crop</button>
       </div>
-      <fieldset disabled={busy}><legend>Crop rectangle (percent of image)</legend>
-        {(['x', 'y', 'width', 'height'] as const).map(key => <label key={key} style={{ display: 'block' }}>
-          {key} <input type="range" aria-label={`Crop ${key}`} min={key === 'width' || key === 'height' ? 1 : 0}
-            max={key === 'x' ? 100 - crop.width : key === 'y' ? 100 - crop.height : key === 'width' ? 100 - crop.x : 100 - crop.y}
-            value={crop[key]} onChange={e => { onInvalidate(); setCrop({ ...crop, [key]: Number(e.target.value) }); }} /> {crop[key]}%
-        </label>)}
-        <button onClick={confirm}>Confirm crop</button>
-      </fieldset>
     </>}
   </section>;
 }
