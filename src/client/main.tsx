@@ -6,6 +6,6 @@ import "./style.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    {location.pathname === "/fixtures/masu" ? <FixtureWalkthrough /> : <App />}
+    {location.pathname.startsWith("/fixtures/") ? <FixtureWalkthrough boat={location.pathname === "/fixtures/boat"} /> : <App />}
   </StrictMode>,
 );

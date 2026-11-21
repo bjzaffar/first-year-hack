@@ -74,7 +74,10 @@ export function UploadCrop({ onCrop, onInvalidate, initialImage }: {
         const ctx = canvas.getContext('2d');
         if (!ctx) throw new Error('Canvas unavailable');
         ctx.drawImage(img, rect.x, rect.y, rect.width, rect.height, 0, 0, canvas.width, canvas.height);
-        onCrop({ dataUrl: canvas.toDataURL(mime, 0.92), mimeType: mime,
+        const dataUrl = canvas.toDataURL(mime, 0.92);
+        // Some browsers fall back to PNG when WebP encoding is unavailable.
+        const encodedMime = dataUrl.slice(5, dataUrl.indexOf(';'));
+        onCrop({ dataUrl, mimeType: encodedMime,
           width: canvas.width, height: canvas.height, sourceUrl: source, crop });
         setBusy(false);
       } catch { fail(); }

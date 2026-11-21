@@ -1,5 +1,7 @@
 # Development environment
 
+Current integration: [T008 live generation](live-generation.md) connects the real catalog, Ollama, compiler and browser. Its API/readiness/setup details supersede the foundation-only or pending-T008 descriptions below; historical verification remains attributed to its original ticket.
+
 Planning source: [PRD](../prd.md). Scope: T002 foundation only. Use Node.js **24+**, npm **11**, and the committed npm lockfile. Local verification used Node 26.13.0 / npm 11.20.0; CI uses Node 24. All direct dependencies are exact versions in [package.json](../package.json).
 
 ## Fresh checkout

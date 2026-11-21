@@ -3,12 +3,14 @@ import { createBoxSample } from "./box-sample.js";
 import { Preview } from "../Preview.js";
 import { TutorialPlayer } from "../TutorialPlayer.js";
 /** Explicit offline fixture route; never presented as analysis of an uploaded photograph. */
-export function FixtureWalkthrough() {
-  const [tutorial] = useState(createBoxSample);
+import { compileBoat } from '../../geometry/boat-compiler.js';
+import type { RenderTutorial } from './motion.js';
+export function FixtureWalkthrough({ boat = false }: { boat?: boolean }) {
+  const [tutorial] = useState<RenderTutorial>(() => boat ? compileBoat({ recipeId: 'basic-boat', parameters: { hullWidthFraction: 0.26 }, objectLabel: 'Boat sample', approximationNotes: ['Fixed boat sample: no photograph was analysed.'] }) : createBoxSample());
   const [phase, setPhase] = useState("preview");
   return (
     <main>
-      <h1>Box recipe demonstration</h1>
+      <h1>{boat ? 'Boat' : 'Box'} recipe demonstration</h1>
       <p>Offline fixture · one square sheet · physical folding unverified</p>
       {phase === "preview" ? (
         <Preview

@@ -1,5 +1,7 @@
 # Adjustable compiler and fold renderer (T005 / T006)
 
+Current integration: [T008 live generation](live-generation.md) connects the real catalog, Ollama, compiler and browser. Its API/readiness/setup details supersede the foundation-only or pending-T008 descriptions below; historical verification remains attributed to its original ticket.
+
 The compiler at `src/geometry/compiler.ts` consumes the merged [T003 motion contract](recipes/masu-motion.md). `compileMasu(unknown)` validates the recipe ID, bounded parameters, object label and approximation notes, and returns a schema-validated nine-step tutorial with ten saved geometry states. `masuCompiler.recipes` exposes the trusted catalog. No operation sequence comes from model output.
 
 ## Compiler boundary

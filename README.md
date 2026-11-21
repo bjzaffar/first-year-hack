@@ -1,19 +1,29 @@
 # FoldLens
 
-FoldLens turns a photograph into an adjustable origami approximation and a visual folding guide. [prd.md](prd.md) is the planning source for this foundation, as instructed by the owner for [T002 / issue #2](https://github.com/bjzaffar/first-year-hack/issues/2). Planning templates elsewhere do not supersede the PRD.
-
-This branch establishes the application foundation. Live photo analysis, a real recipe compiler, upload/crop and tutorial rendering are separate tickets. The browser includes local diagnostics and an explicitly labelled synthetic fixture; it does not generate origami yet.
+FoldLens turns a cropped photograph into a bounded tray or pointed boat approximation and a visual folding guide. [prd.md](prd.md) is the owner-designated product source. Local Qwen3-VL analysis selects proportions; the trusted recipe compiler supplies every geometry state and instruction. Preview acceptance is required before the guide.
 
 ## Run locally
 
-Requires Node.js 24+ and npm 11. Use npm only; commit `package-lock.json` with dependency changes.
+Requires Node.js 24+, npm 11 and local [Ollama](docs/ollama.md). Install the measured model explicitly:
+
+```sh
+ollama pull qwen3-vl:4b-instruct
+ollama serve
+```
+
+In another terminal:
 
 ```sh
 npm ci
+cp .env.example .env
 npm run dev
 ```
 
-Open **http://127.0.0.1:5173**. The backend listens on **127.0.0.1:3001** and Vite proxies `/api`. No credentials, database or model download are required for the foundation. Optionally copy `.env.example` to `.env` for port overrides.
+Open **http://127.0.0.1:5173**. Choose a JPEG, PNG or WebP, adjust and confirm its crop, then **Generate from photograph**. Review the photograph, geometry and simplifications; accept to enter materials and Back/Replay/Next navigation. Rejecting or retrying retains the crop. No accounts, cloud inference, persisted photos or credentials are used.
+
+The backend binds **127.0.0.1:3001**; Vite proxies `/api`. Use `API_PORT` / `WEB_PORT` for another local session. `.env.example` explicitly selects `qwen3-vl:4b-instruct`; without a setting, the adapter retains its original `qwen3-vl:4b` default. There is no model or sample fallback.
+
+**Sample without a model:** open `/fixtures/masu` for the labelled box or `/fixtures/boat` for the four-step boat walkthrough. Live generation failures never substitute this sample. `GET /api/health` reports model availability and compiler readiness; it does not guarantee inference speed.
 
 ```sh
 npm run typecheck
@@ -22,33 +32,25 @@ npm run build
 npm start
 ```
 
-`npm start` serves the built browser and API together at **http://127.0.0.1:3001**. `npm run dev` is the development flow with hot reload. Production build output stays local in ignored `dist/`.
+`npm start` serves the built browser and API at **http://127.0.0.1:3001**. Build output stays in ignored `dist/`. See [live generation and testing](docs/live-generation.md), [development](docs/development.md), [architecture](docs/architecture.md), and [contracts](docs/contracts.md).
 
-## Foundation diagnostics
+## Limits
 
-Click **Check server**: backend ready, model/compiler not configured. Click **Load synthetic fixture**: a schema-validated single-hinge example appears, with a warning that no photograph was analysed. Live generation returns HTTP 503 and never silently substitutes this fixture.
-
-The server-side [local Ollama analysis adapter](docs/ollama.md) can be exercised independently with the benchmark CLI. It is not yet connected to live tutorial generation.
-
-See [development](docs/development.md) for exact checks and port examples, [architecture](docs/architecture.md) for ownership, and [contracts](docs/contracts.md) for API examples and schema boundaries.
+Two authored families are supported: square open container (wall-height fraction 0.06–0.16) and basic pointed V-hull boat (transverse crease fraction 0.24–0.30). Both use one square sheet. The boat is not claimed to be watertight or physically verified. Complex objects receive an honest approximation, not a reconstruction. Physical folding, paper thickness, shape retention, beginner usability and folding duration remain unverified. Preview and tutorial share the same final geometry. The 60-second server deadline is enforced; the separate 30-second performance target depends on the image and machine.
 
 ## Repository workflow
 
-Read [AGENTS.md](AGENTS.md) and [workflow](docs/workflow.md) before contributing. The lead assigns one issue per named branch and reviews PRs targeting `main`. Do not push to `main`, merge, deploy or close implemented issues without assignment. Separate concurrent sessions use separate worktrees/clones and ports.
+Read [AGENTS.md](AGENTS.md) and [workflow](docs/workflow.md). The lead assigns one issue per named branch and reviews PRs targeting `main`. Do not push to `main`, merge, deploy or close implemented issues without assignment. Concurrent sessions use separate worktrees/clones and ports.
 
 ## Folder map
 
-- `src/client/`: minimal React browser shell; Three.js is installed for the renderer ticket.
-- `src/server/`: Express app, startup and port validation.
-- `src/shared/`: version 1 Zod schemas/types, compiler/provider interfaces, synthetic and invalid fixtures.
-- `tests/`: contract invariants and actual HTTP boundary tests.
+- `src/client/`: upload/crop, live request flow, preview and Three.js/SVG player.
+- `src/server/`: local Express API, generation orchestration and Ollama adapter.
+- `src/shared/`: schemas, supported analysis catalog and response union.
+- `src/geometry/`, `src/recipes/`: trusted compiler and authored motion.
+- `tests/`: geometry, contracts, HTTP boundaries, adapter and browser component tests.
 - `docs/`, `prd.md`: product and technical context.
-- `.github/workflows/app-check.yml`: install, typecheck, tests and build.
-- `.github/workflows/template-check.yml`: separate documentation check.
-- `prompts/`, `tasks/TEMPLATE.md`, [QUICKSTART.md](QUICKSTART.md): collaboration templates retained from the starter.
+- `.github/workflows/`: app checks and separate template documentation checks.
+- `prompts/`, `tasks/TEMPLATE.md`, [QUICKSTART.md](QUICKSTART.md): collaboration templates.
 
-Template validation is separate from app validation:
-
-```sh
-python3 scripts/check_template.py
-```
+Run `python3 scripts/check_template.py` for local Markdown links; this is separate from application validation.

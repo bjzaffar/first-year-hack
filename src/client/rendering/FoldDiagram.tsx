@@ -4,9 +4,11 @@ import type { RenderTutorial } from "./motion.js";
 export function FoldDiagram({
   tutorial,
   index,
+  final = false,
 }: {
   tutorial: RenderTutorial;
   index: number;
+  final?: boolean;
 }) {
   const marker = useId().replaceAll(":", "");
   const step = tutorial.steps[index],
@@ -27,13 +29,13 @@ export function FoldDiagram({
     return [(v.x + 1) * 200, (1 - v.y) * 200];
   };
   const points = new Map(
-    before.vertices.map((v) => [v.id, project(v.position)]),
+    (final ? after : before).vertices.map((v) => [v.id, project(v.position)]),
   );
   return (
     <svg
       viewBox="0 0 400 400"
       role="img"
-      aria-label={`Fixed teaching diagram: ${step.id}`}
+      aria-label={final ? 'Final origami geometry diagram' : `Fixed teaching diagram: ${step.id}`}
       width="400"
       height="400"
       style={{ display: "block", width: "100%", height: 360, minWidth: 0 }}

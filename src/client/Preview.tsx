@@ -1,17 +1,22 @@
 import type { RenderTutorial } from "./rendering/motion.js";
 import { FoldScene } from "./rendering/FoldScene.js";
+import { FoldDiagram } from "./rendering/FoldDiagram.js";
+import { useState } from "react";
 
 export function Preview({
   tutorial,
   photoDataUrl,
   onAccept,
   onRetry,
+  onNewImage,
 }: {
   tutorial: RenderTutorial;
   photoDataUrl?: string;
   onAccept: () => void;
   onRetry: () => void;
+  onNewImage?: () => void;
 }) {
+  const [renderFailed, setRenderFailed] = useState(false);
   const sheetCount = tutorial.materials.sheets.length;
   const estimatedMinutes = tutorial.estimatedMinutes;
 
@@ -26,7 +31,8 @@ export function Preview({
           </div>
         )}
         <div className="model-side">
-          <FoldScene tutorial={tutorial} />
+          <FoldScene tutorial={tutorial} onError={() => setRenderFailed(true)} />
+          {renderFailed && <FoldDiagram tutorial={tutorial} index={tutorial.steps.length - 1} final />}
           <p className="caption">Generated origami geometry</p>
         </div>
       </div>
@@ -64,6 +70,7 @@ export function Preview({
         <button className="secondary" onClick={onRetry}>
           Return to crop
         </button>
+        {onNewImage && <button className="secondary" onClick={onNewImage}>Choose another image</button>}
       </div>
     </section>
   );
