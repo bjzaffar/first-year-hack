@@ -221,6 +221,7 @@ button.finish:hover { background: #ebcfb7; }
 .crop-handle-se { right: -14px; bottom: -14px; cursor: nwse-resize; }
 .crop-actions { margin-top: 28px; }
 
-/* Decorative only: faint at the edges, quieter still behind the reading area. */
-#root { isolation: isolate; }
-.paper-background { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; mask-image: linear-gradient(to right, #000, #0004 30%, #0004 70%, #000); }
+/* Explicit layers keep the decoration above the paper and below the content. */
+#root { isolation: isolate; position: relative; }
+#root > main { position: relative; z-index: 1; }
+.paper-background { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; mask-image: linear-gradient(to right, #000, #000b 30%, #000b 70%, #000); }

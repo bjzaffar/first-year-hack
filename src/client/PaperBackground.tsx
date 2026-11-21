@@ -14,8 +14,8 @@ export function PaperBackground() {
   }, []);
 
   return <div className="paper-background" aria-hidden="true">
-    <Particles key={String(reducedMotion)} particleCount={90} particleColors={colors} particleBaseSize={18}
-      sizeRandomness={0.6} speed={0.035} opacity={0.2} lightMode
+    <Particles key={String(reducedMotion)} particleCount={140} particleColors={colors} particleBaseSize={5}
+      sizeRandomness={0} speed={0.035} opacity={0.45}
       glow={0} twinkle={0} connections={false} intro={false}
       moveParticlesOnHover={false} clickBurst={false} disableRotation
       drift="up" driftSpeed={0.12} pixelRatio={1.5} paused={reducedMotion} />
