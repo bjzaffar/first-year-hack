@@ -28,6 +28,8 @@ npm start
 
 Click **Check server**: backend ready, model/compiler not configured. Click **Load synthetic fixture**: a schema-validated single-hinge example appears, with a warning that no photograph was analysed. Live generation returns HTTP 503 and never silently substitutes this fixture.
 
+The server-side [local Ollama analysis adapter](docs/ollama.md) can be exercised independently with the benchmark CLI. It is not yet connected to live tutorial generation.
+
 See [development](docs/development.md) for exact checks and port examples, [architecture](docs/architecture.md) for ownership, and [contracts](docs/contracts.md) for API examples and schema boundaries.
 
 ## Repository workflow
