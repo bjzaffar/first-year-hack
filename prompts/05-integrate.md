@@ -3,7 +3,7 @@
 Copy the following into the intended session and replace placeholders.
 
 ```text
-Read AGENTS.md and docs/workflow.md. Use Babar (bjzaffar). You are the designated integration session.
+Read AGENTS.md and docs/workflow.md. Use my own authorized GitHub account. You are the designated integration session.
 
 PRs to integrate: [PR_URLS]
 
