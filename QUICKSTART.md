@@ -1,58 +1,45 @@
 # Practical hackathon guide
 
-## Once, for this source template
+## Start the event repo
 
-Enable GitHub Settings → General → Template repository. The folder contents alone do not toggle this setting. Keep reusable rules here; do event work in a new repository.
+On GitHub, open this template and choose **Use this template → Create a new repository**. That new event repo is the shared project: its issues, branches, PRs, and code are what the team uses. Invite teammates as collaborators with ordinary write access; have each accept the invite. They clone the event repo once and work in their own local copy. Local edits are private until pushed; pushing a ticket branch does not merge it into `main`. Do not use Download ZIP for ongoing collaboration because it omits Git history and the remote connection.
 
-## 1. Create your event repository
+Check event rules on pre-existing code, AI use, APIs, data, visibility, and submission. The app idea and stack are deliberately undecided. Ask the manager AI to fill the brief, research, development, and architecture docs as decisions are made.
 
-Use GitHub's **Use this template → Create a new repository**. Give it the event/project name, choose visibility according to event rules, clone it, and open it as a Codex project. Ensure Babar can access it. Create issues in this new repo, not in the source template.
+## Set up review ownership
 
-## 2. Research and create tickets
+The event repo has `.github/CODEOWNERS` with `* @bjzaffar`. Keep that if Babar is the team lead; replace it with the actual lead's GitHub username if different. The owner must have repository write access. In the **event repo**, protect `main`: require a PR, one approval, review from Code Owners, and dismissal of stale approvals after new commits. Leave force pushes and deletions disabled. Check that the rule is active for the repo's visibility and account plan. Ordinary collaborators cannot merge before the required code owner approval; after approval, someone with merge permission can click Merge. Administrators can bypass a classic rule unless bypassing is disabled. If you disable admin bypass, the lead cannot approve their own PR and will need another eligible reviewer. Test the setup with a small teammate PR.
 
-Open one main session, which can later become the integration session. Paste [prompts/01-research.md](prompts/01-research.md) and provide the event brief/rules, time available, team size, interests, and any idea you already have. The AI researches, records evidence, helps settle the MVP with you, and creates draft issues. If research happened in another AI tool, give Codex its report, sources, and issue links; tell it to reconcile those with the docs before proceeding.
+## Plan and assign
 
-You do not need to edit every Markdown file yourself. Ask the AI to fill the relevant files based on your answers.
+1. In the lead's manager chat, use [prompts/01-research.md](prompts/01-research.md) to research the event, choose a feasible MVP, and create draft issues in the event repo. Give it event rules, deadline, team size, interests, and constraints.
+2. Use [prompts/02-organize-tickets.md](prompts/02-organize-tickets.md) to label/number the existing issues, record dependencies, and identify independent tickets. `P1-T003` is a phase/task ID; GitHub `#12` is the issue number. The lead assigns issues manually.
+3. Finish and merge the foundation issue using [prompts/03-foundation.md](prompts/03-foundation.md). It establishes the runnable app, actual setup/check commands, shared contracts, and CI before parallel feature work.
+4. Give each teammate a different ready issue URL. Dependencies should already be merged into `main`. The same issue board and PR list are visible to everyone with repo access.
 
-## 3. Number and phase the existing tickets
+## Teammate copy and paste prompts
 
-In that main session paste [prompts/02-organize-tickets.md](prompts/02-organize-tickets.md). Codex updates the existing issues, creates necessary labels, records dependencies, and returns a table of what can run in parallel. It does not create duplicate tickets or start worker sessions.
+**When starting:**
 
-## 4. Finish the foundation first
+> Clone this shared event repo to my computer: [REPO URL]. Open the cloned folder, read AGENTS.md and docs/workflow.md, create a new branch for issue [ISSUE URL], and implement only that ticket. Check that I am signed into GitHub with my own account and have access. Tell me if I need to sign in or accept an invitation. Do not write to main or merge anything.
 
-Assign the setup/foundation issue to the main session using [prompts/03-foundation.md](prompts/03-foundation.md). Ask it to implement and integrate that foundation. It chooses the agreed stack, gets the app running, records commands/contracts, and adds actual app checks. Foundation and planning context must be committed and merged before workers branch from it.
+**When ready to submit:**
 
-## 5. Open two worker chats
+> Review my changes for issue [ISSUE URL]. If I edited on main locally, move the uncommitted work to a new ticket branch first. Run relevant checks, commit and push my ticket branch, then open a PR into main in the shared event repo. Link the issue, summarize the changes and checks, and give me the PR link to send to the team lead. Do not merge it.
 
-In Codex open a new chat for the event project, choose **Worktree**, and start from the updated integration branch (normally main). Paste [prompts/04-worker.md](prompts/04-worker.md), replacing ISSUE_URL and SESSION_NAME. Repeat for another independent ready issue.
+Git is enough for cloning, branching, committing, and pushing. GitHub CLI (`gh`) is optional: the teammate's AI may create the PR through an available GitHub connection or browser; otherwise the teammate can click **Compare & pull request** on GitHub after the branch is pushed. Their AI must use that teammate's own GitHub login. A branch is part of the clone, not another downloaded folder. Create one new branch per ticket; after a PR is merged, update from `main` before the next ticket.
 
-Example: Worker A gets issue #12; Worker B gets #13. Their issue IDs might be P1-T003 and P1-T004. The issue URLs are the safest assignment reference.
+## Lead's own two workers
 
-Each worker checks dependencies, records its assignment comment, implements, tests, pushes its own branch, and opens a PR. You monitor progress through the chats and issues. No GitHub bot or automatic dispatcher is required.
+The lead can keep one low-volume desktop manager chat and two Codex terminal workers in separate worktrees of the event repo. Assign different independent tickets. Use Astra Medium for the manager, GPT-6.1 Sol for standard workers, and Luna for bounded styling/boilerplate. Each worker has a ticket branch, pushes a PR, and stops. Worktrees isolate local files; they do not isolate ports, databases, or external services. Never run two workers in the same folder. Switch between terminal tabs while they work. Save each handoff in the PR/issue, then start a fresh worker chat for the next ticket. The separate PDF field guide gives the practical loop and cleanup steps.
 
-## 6. Integrate completed PRs
+## Review, merge, and repeat
 
-Return to the main chat and paste [prompts/05-integrate.md](prompts/05-integrate.md) with the PR links. It reviews them, merges in dependency order, runs combined checks, and updates issue status. Workers do not merge each other's work.
+The lead sends the manager the PR links, asks it to review the latest commits and merge ready PRs in dependency order, then run combined checks and the demo journey. Workers and teammates do not merge their own PRs. For the lead's terminal workers, exit their sessions and stop dev servers before asking the manager to inspect and remove the temporary worktrees. A teammate's ordinary clone stays on their computer; the lead does not remove it. Keep the manager chat short by using issues for status, PRs for evidence, and docs for durable decisions. Reserve time for integration, demo rehearsal, and submission.
 
-## 7. Give a worker its next issue
+## If blocked
 
-Reuse a worker for related work, or open a fresh worktree chat for unrelated work. Say:
-
-> Finish the previous handoff. Check that its PR is merged and your work is saved. Start issue ISSUE_URL on a new branch from the latest main. Follow AGENTS.md and re-read the issue and updated contracts.
-
-Do not just keep committing to the old merged branch. If a branch/worktree is dirty, preserve the work and resolve its ownership before switching. A session that is blocked reports it; you choose whether to reassign it.
-
-## 8. Prepare the submission
-
-Paste [prompts/06-demo.md](prompts/06-demo.md) in the main chat. Walk through the real demo yourself, verify links/access, and submit according to event rules. Ask explicitly if you want Codex to deploy or submit externally.
-
-## Your main responsibilities
-
-Choose the idea and scope; manually give tickets to sessions; tell integration which PRs to merge; provide secrets through appropriate local/service settings; make final demo/submission decisions. Let sessions maintain docs and ticket updates as part of their work.
-
-## If something goes wrong
-
-- Wrong account: stop remote writes; reconnect/verify Babar. Do not use Imaad as fallback.
-- Two sessions editing the same area: pause that overlap, name one owner, and sequence the changes.
-- Missing GitHub access: use one file per task under tasks/ temporarily, report that remote state is unavailable, and reconcile into issues when access returns.
-- Too little time: cut stretch issues, preserve a working demo, and write down limitations rather than claiming unfinished features.
+- Wrong GitHub identity or missing access: stop the remote write; sign in with the operator's own account or accept the repo invitation.
+- Competing changes to a shared file: pause the overlap; let the lead choose the owner and order.
+- Failed checks or conflict: keep the PR and branch; fix the issue before merge. Do not discard uncommitted work.
+- Missing app commands: the foundation issue must fill docs/development.md. Template documentation CI is not an app test.
