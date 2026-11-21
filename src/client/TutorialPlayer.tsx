@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import type { CompiledTutorial } from '../shared/schemas.js';
 
 export function TutorialPlayer({
@@ -14,6 +14,8 @@ export function TutorialPlayer({
   const [stepIndex, setStepIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   const currentStep = steps[stepIndex];
   const totalSteps = steps.length;
@@ -74,7 +76,7 @@ export function TutorialPlayer({
           {isLast ? 'Finish' : 'Next'}
         </button>
         {isLast && (
-          <button className="finish" onClick={onFinish}>
+          <button className="finish" onClick={onFinish} disabled={isAnimating}>
             Complete
           </button>
         )}

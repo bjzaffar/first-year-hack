@@ -54,7 +54,7 @@ export function Preview({
       </div>
       <div className="actions">
         <button onClick={onAccept}>Accept and start folding</button>
-        <button className="secondary" onClick={onRetry}>Retry with another image</button>
+        <button className="secondary" onClick={onRetry}>Return to crop</button>
       </div>
     </section>
   );
