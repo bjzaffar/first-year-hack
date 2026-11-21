@@ -58,9 +58,12 @@ describe('T003 whole-sheet coupled construction', () => {
       for(const corner of ['nw','ne','se','sw']) expect(end.get(`outer-${corner}`)![2]).toBeCloseTo(dims.wallHeight,10);
     });
   }
-  it('has no sampled transverse face penetrations during any whole-sheet motion', () => {
-    for(const fixture of masuMotionFixtures) for(const step of masuMotionStepIds) for(let frame=1;frame<20;frame++) {
-      const state=sampleMasuMotion(fixture.parameters,step,frame/20), vertices=new Map(state.vertices.map(v=>[v.id,v.position]));
+  // Separate cases retain the exhaustive sweep without one runner-dependent timeout.
+  it.each(masuMotionFixtures.flatMap(fixture => masuMotionStepIds.map(step => ({
+    parameters: fixture.parameters, height: fixture.parameters.wallHeightFraction, step,
+  }))))('has no sampled transverse penetrations at h=$height during $step', ({ parameters, step }) => {
+    for(let frame=1;frame<20;frame++) {
+      const state=sampleMasuMotion(parameters,step,frame/20), vertices=new Map(state.vertices.map(v=>[v.id,v.position]));
       const triangles=state.faces.flatMap(face=>face.vertexIds.slice(1,-1).map((_,i)=>({
         face:face.id, pts:[face.vertexIds[0],face.vertexIds[i+1],face.vertexIds[i+2]].map(id=>vertices.get(id)!),
       })));
