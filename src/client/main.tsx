@@ -1,6 +1,5 @@
 import { StrictMode, useState, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
-import { REVISION } from 'three';
 import { GenerateResponseSchema, type CompiledTutorial } from '../shared/schemas.js';
 import { UploadCrop, type CroppedImage } from './UploadCrop.js';
 import { GenerationStates } from './GenerationStates.js';
@@ -80,10 +79,22 @@ function App() {
 
   return (
     <main>
-      <p className="eyebrow">FoldLens · From photograph to paper</p>
-      <h1>From photograph to paper.</h1>
-      <p role="note">Sample mode: no photograph is analysed. The tutorial and renderer placeholders are synthetic.</p>
-      <p className="tagline">Upload a photo of an everyday object and follow a step-by-step folding tutorial.</p>
+      <header className="studio-header">
+        <a className="wordmark" href="/" aria-label="FoldLens home"><span aria-hidden="true" className="fold-mark">◇</span> FoldLens<span className="wordmark-dot">.</span></a>
+        <span className="studio-caption">A little wonder, made by hand.</span>
+      </header>
+      <div className="intro">
+        <p className="eyebrow">THE PAPER STUDIO</p>
+        <h1>See the ordinary.<br /><em>Fold something extraordinary.</em></h1>
+        <p className="tagline">A photograph, a square of paper, a new perspective.<br />Explore the art of origami, one fold at a time.</p>
+      </div>
+      <nav className="journey" aria-label="Folding journey">
+        {['Choose an object', 'Meet your model', 'Make it yours'].map((label, index) => {
+          const active = phase === 'upload' || phase === 'error' ? 0 : phase === 'preview' || phase === 'generating' ? 1 : 2;
+          return <span key={label} className={active === index ? 'current' : ''} aria-current={active === index ? 'step' : undefined}><small>0{index + 1}</small>{label}</span>;
+        })}
+      </nav>
+      <p className="sample-notice" role="note"><span aria-hidden="true">○</span> Studio preview · Explore a sample tutorial. Your photograph stays local and isn’t analysed yet.</p>
 
       {phase === 'upload' && (
         <UploadCrop onCrop={handleCrop} onInvalidate={() => setCroppedImage(null)} initialImage={croppedImage} />
@@ -143,7 +154,7 @@ function App() {
       )}
 
       <footer className="app-footer">
-        <p>Contract version 1 · Three.js r{REVISION} · Session-only; refreshing discards progress.</p>
+        <span className="footer-brand">FoldLens</span><p>Made of paper. Shaped by curiosity.</p><small>Your progress lives in this session.</small>
       </footer>
     </main>
   );

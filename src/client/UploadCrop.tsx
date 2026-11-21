@@ -82,13 +82,16 @@ export function UploadCrop({ onCrop, onInvalidate, initialImage }: {
   }
 
   return <section className="upload-section">
-    <h2>Upload and crop a photograph</h2>
-    <p>Choose an image, then adjust the crop to isolate one object.</p>
+    <p className="section-kicker">01 / BEGIN WITH SOMETHING FAMILIAR</p>
+    <h2>What will you fold?</h2>
+    <p>Choose a photograph of an object that catches your eye.</p>
     <div className="drop-zone" onDragOver={e => e.preventDefault()} onDrop={e => {
       e.preventDefault(); const file = e.dataTransfer.files[0]; if (file) handleFile(file);
     }}>
-      <button onClick={() => input.current?.click()}>Choose image</button>
-      <span>or drop a JPEG, PNG, or WebP here (up to 10 MB)</span>
+      <svg className="paper-illustration" viewBox="0 0 160 120" fill="none" aria-hidden="true"><path d="M32 81 66 22l58 29-33 59Z" fill="#e8e1d2"/><path d="m32 81 58-19 34-11-58-29Z" fill="#fdfbf5" stroke="#c8bdab"/><path d="m32 81 58-19 1 48Z" fill="#e0d7c5" stroke="#c8bdab"/><path d="m90 62 34-11-33 59Z" fill="#f2ecdf" stroke="#c8bdab"/><path d="m66 22 24 40" stroke="#c8bdab" strokeDasharray="3 4"/></svg>
+      <p className="drop-title">Every fold starts with a little inspiration.</p>
+      <button onClick={() => input.current?.click()}>Choose a photograph <span aria-hidden="true">↗</span></button>
+      <span>or drop it here · JPG, PNG, WebP · up to 10 MB</span>
     </div>
     <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={e => {
       const file = e.target.files?.[0]; if (file) handleFile(file); e.target.value = '';
