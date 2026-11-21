@@ -2,7 +2,9 @@ import { masuOperations } from "../../shared/masu-contract.js";
 import { Vector3 } from "three";
 import type { CompiledTutorial, GeometryState } from "../../shared/schemas.js";
 import { type MasuTutorial, masuState } from "../../geometry/compiler.js";
-export type RenderTutorial = CompiledTutorial | MasuTutorial;
+import { type BoatTutorial } from '../../geometry/boat-compiler.js';
+import { boatState } from '../../recipes/boat.js';
+export type RenderTutorial = CompiledTutorial | MasuTutorial | BoatTutorial;
 export function sampleStep(
   tutorial: RenderTutorial,
   index: number,
@@ -26,6 +28,11 @@ export function sampleStep(
     if (progress === 0) return structuredClone(before);
     if (progress === 1) return structuredClone(after);
     return masuState(tutorial.parameters, s.id, progress);
+  }
+  if (tutorial.contractVersion === 'boat-1') {
+    if (progress === 0) return structuredClone(before);
+    if (progress === 1) return structuredClone(after);
+    return boatState(tutorial.parameters, index, progress);
   }
   const operation = tutorial.steps[index].operation;
   if (operation.type !== "hinge") throw new Error("Unsupported fold motion");

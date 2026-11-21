@@ -2,8 +2,8 @@ import type { CompiledTutorial, GenerateRequest, ObjectAnalysis, RecipeDefinitio
 
 export type LiveImage = Extract<GenerateRequest, { mode: 'live' }>['image'];
 // Implementations must validate unknown provider output before returning it.
-export interface AnalysisProvider {
-  analyze(image: LiveImage, recipes: readonly RecipeDefinition[], signal: AbortSignal): Promise<ObjectAnalysis>;
+export interface AnalysisProvider<Recipe = RecipeDefinition, Analysis = ObjectAnalysis> {
+  analyze(image: LiveImage, recipes: readonly Recipe[], signal: AbortSignal): Promise<Analysis>;
   readiness(signal: AbortSignal): Promise<'ready' | 'unavailable'>;
 }
 // Executable fitting/formulas live in trusted code, never in JSON or AI output.

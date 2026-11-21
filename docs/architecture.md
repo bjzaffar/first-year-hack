@@ -1,5 +1,7 @@
 # Architecture and ownership
 
+Current integration: [T008 live generation](live-generation.md) connects the real catalog, Ollama, compiler and browser. Its API/readiness/setup details supersede the foundation-only or pending-T008 descriptions below; historical verification remains attributed to its original ticket.
+
 The owner designated [prd.md](../prd.md) as the planning source for T002. The integration branch is `main`; implementation and handoff use ticket branches and PRs. Foundation does not implement live analysis or a geometry engine.
 
 ## Selected foundation

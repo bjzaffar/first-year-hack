@@ -1,5 +1,7 @@
 # Shared contracts, version 1
 
+Current integration: [T008 live generation](live-generation.md) connects the real catalog, Ollama, compiler and browser. Its API/readiness/setup details supersede the foundation-only or pending-T008 descriptions below; historical verification remains attributed to its original ticket.
+
 [Executable schemas and inferred types](../src/shared/schemas.ts) are the source of truth. [Interfaces](../src/shared/interfaces.ts) define future compiler/provider boundaries. [Fixtures](../src/shared/fixtures.ts) supply validated deterministic examples. T002/integration owns these shared files; workers propose changes in issue #2 before changing consumers. Product source: [PRD](../prd.md).
 
 All wire envelopes carry `contractVersion: "1"` (tutorial/error for responses). Unknown fields, invalid versions, non-finite numbers, unknown recipe/operation IDs and missing required fields are rejected. IDs are stable lowercase strings; mesh indices are represented as references to IDs. API values contain data only. There are no credentials or auth headers in the local API.

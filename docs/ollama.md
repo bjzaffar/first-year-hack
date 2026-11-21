@@ -1,5 +1,7 @@
 # Local photo analysis (T004)
 
+Current integration: [T008 live generation](live-generation.md) connects the real catalog, Ollama, compiler and browser. Its API/readiness/setup details supersede the foundation-only or pending-T008 descriptions below; historical verification remains attributed to its original ticket.
+
 The server adapter implements the shared `AnalysisProvider` interface in [ollama.ts](../src/server/providers/ollama.ts). It returns validated `ObjectAnalysis`, not geometry or instructions. Live `/api/generate` and health orchestration remain T008 work: the foundation API still reports not configured until a real compiler/catalog is integrated. No frontend changes are part of T004.
 
 ## Setup

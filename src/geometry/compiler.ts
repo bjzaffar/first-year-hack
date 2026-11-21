@@ -14,6 +14,7 @@ import {
   masuMotionStepIds,
 } from "../shared/masu-contract.js";
 import { masuBoxDimensions } from "../recipes/masu-box.js";
+import { MasuLiveRecipeSchema } from "../shared/live-analysis.js";
 
 const id = z.string().min(1);
 export const MasuAnalysisSchema = z.strictObject({
@@ -214,9 +215,12 @@ export function compileMasu(input: unknown): MasuTutorial {
   });
 }
 export const masuCompiler = {
-  recipes: [masuMotionContract],
+  recipes: [MasuLiveRecipeSchema.parse({
+    id: masuMotionContract.recipeId, version: '0.1.0', synthetic: false,
+    parameterBounds: masuMotionContract.parameterBounds, limitations: masuLimitations,
+  })],
   compile: compileMasu,
 };
-export function finalState(tutorial: MasuTutorial): GeometryState {
+export function finalState(tutorial: { states: GeometryState[]; finalStateId: string }): GeometryState {
   return tutorial.states.find((s) => s.id === tutorial.finalStateId)!;
 }

@@ -6,7 +6,7 @@ import { port } from '../src/server/config.js';
 
 let server: Server, base: string;
 beforeAll(async () => {
-  server = createApp().listen(0, '127.0.0.1');
+  server = createApp(undefined, { provider: null }).listen(0, '127.0.0.1');
   await new Promise<void>((resolve, reject) => { server.once('listening', resolve); server.once('error', reject); });
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('No TCP address');
@@ -28,7 +28,7 @@ describe('local HTTP boundary', () => {
     expect(value.ok && value.tutorial.synthetic).toBe(true);
   });
   it('does not substitute a fixture for live generation', async () => {
-    const r = await post({ contractVersion: '1', mode: 'live', image: { mimeType: 'image/png', base64: 'iVBORw==', width: 1, height: 1 } });
+    const r = await post({ contractVersion: '1', mode: 'live', image: { mimeType: 'image/png', base64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC', width: 1, height: 1 } });
     expect(r.status).toBe(503);
     expect(await r.json()).toMatchObject({ ok: false, error: { code: 'MODEL_UNAVAILABLE' } });
   });

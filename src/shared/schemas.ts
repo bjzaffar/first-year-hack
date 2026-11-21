@@ -123,9 +123,9 @@ export const GenerateResponseSchema = z.discriminatedUnion('ok', [
 ]);
 export const HealthSchema = z.strictObject({
   contractVersion: version, backend: z.literal('ready'),
-  model: z.literal('not_configured'), compiler: z.literal('not_configured'),
-  generationReady: z.literal(false), fixtureAvailable: z.literal(true),
-});
+  model: z.enum(['not_configured', 'ready', 'unavailable']), compiler: z.enum(['not_configured', 'ready']),
+  generationReady: z.boolean(), fixtureAvailable: z.literal(true),
+}).refine(h => h.generationReady === (h.model === 'ready' && h.compiler === 'ready'), 'Readiness must reflect both dependencies');
 export type ObjectAnalysis = z.infer<typeof ObjectAnalysisSchema>;
 export type RecipeDefinition = z.infer<typeof RecipeDefinitionSchema>;
 export type FoldOperation = z.infer<typeof FoldOperationSchema>;

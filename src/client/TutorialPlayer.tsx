@@ -17,9 +17,11 @@ export function TutorialPlayer({
   const [index, setIndex] = useState(0),
     [replayKey, setReplayKey] = useState(0),
     [playing, setPlaying] = useState(true);
+  const [renderFailed, setRenderFailed] = useState(false);
   const step = tutorial.steps[index];
   const loadStep = (next: number) => {
     setPlaying(true);
+    setRenderFailed(false);
     setIndex(next);
   };
   return (
@@ -39,7 +41,7 @@ export function TutorialPlayer({
           index={index}
           replayKey={replayKey}
           onComplete={() => setPlaying(false)}
-          onError={() => setPlaying(false)}
+          onError={() => { setPlaying(false); setRenderFailed(true); }}
         />
         <FoldDiagram tutorial={tutorial} index={index} />
       </div>
@@ -49,7 +51,7 @@ export function TutorialPlayer({
         corners move.
       </p>
       <p aria-live="polite">
-        {playing ? "Playing fold…" : "Ready for the next step."}
+        {renderFailed ? "3D playback is unavailable. Use the diagram, or Replay to retry the 3D view." : playing ? "Playing fold…" : "Ready for the next step."}
       </p>
       <div className="tutorial-controls">
         <button className="secondary" onClick={onBack}>
@@ -65,6 +67,7 @@ export function TutorialPlayer({
           disabled={playing}
           onClick={() => {
             setPlaying(true);
+            setRenderFailed(false);
             setReplayKey((k) => k + 1);
           }}
         >
