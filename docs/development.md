@@ -75,3 +75,9 @@ Default ports were occupied, so development startup used `API_PORT=43171 WEB_POR
 ## Local photo analysis
 
 T004 adds a standalone server-side AnalysisProvider and explicit benchmark CLI. See [Ollama setup and integration](ollama.md) and [measured latency/quality results](ollama-benchmark.md). The tested setup sets OLLAMA_MODEL=qwen3-vl:4b-instruct explicitly; generic tags currently point to thinking variants. App fixture startup still needs no model, and the live tutorial API remains unavailable pending compiler/orchestration integration.
+
+## T007 frontend review fixes
+
+Sample mode is explicitly labelled before loading; it never submits a photograph or invents backend processing stages. Choose an image, adjust the crop rectangle using the percentage controls, confirm it, then load the synthetic tutorial. Returning from preview preserves the source and crop for adjustment. A request error offers direct retry with the confirmed crop or a separate new-image action. Invalid, oversized, unreadable and undecodable files invalidate the previous selection.
+
+Verification: production build/typecheck, all 19 Vitest tests (including selected-region/resizing and invalid-crop tests), template checks and whitespace checks passed. HTTP tests required loopback permission. Browser interaction checks remain unperformed; renderer and diagram slots remain placeholders. On review, exercise recrop, same-image retry, corrupt-file handling and completion while replay is active before merging.
