@@ -168,3 +168,40 @@ input[type=range] { accent-color:var(--accent); vertical-align:middle; width:min
 @keyframes arrive { from { opacity:0; transform:translateY(7px); } to { opacity:1; transform:translateY(0); } }
 @media(max-width:640px) { main { padding:22px; } .studio-caption { display:none; } .intro { padding:42px 0 32px; } h1 { letter-spacing:-1px; } .journey { gap:15px; justify-content:space-between; } .journey span { font-size:10px; gap:5px; } .journey small { display:none; } .journey .current small { display:none; } .drop-zone { padding:22px 15px 30px; } .app-footer { justify-content:center; text-align:center; gap:9px 18px; } .app-footer small { width:100%; } .step-header { flex-wrap:wrap; gap:8px; } }
 @media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
+
+/* A few folded-paper colours, with deeper inks for readable text. */
+:root {
+  --paper-sage: #dce6d5;
+  --paper-lilac: #e5dff0;
+  --paper-peach: #f3decc;
+  --paper-rose: #efdadd;
+  --ink-lilac: #776386;
+  --ink-rose: #956475;
+}
+h1 em { color: var(--ink-lilac); }
+.fold-mark { color: #899c79; }
+.wordmark-dot { color: #c68f99; }
+.eyebrow { color: var(--ink-rose); }
+.section-kicker { color: #7c6656; }
+.journey span:nth-child(1) { --step-paper: var(--paper-sage); --step-ink: #4d6146; }
+.journey span:nth-child(2) { --step-paper: var(--paper-lilac); --step-ink: #695779; }
+.journey span:nth-child(3) { --step-paper: var(--paper-peach); --step-ink: #7b5940; }
+.journey small { background: var(--step-paper); color: var(--step-ink); border-radius: 50%; width: 26px; height: 26px; display: grid; place-items: center; }
+.journey .current { color: var(--step-ink); }
+.journey .current small { background: var(--step-paper); color: var(--step-ink); box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--step-paper); }
+.paper-illustration path:nth-child(1) { fill: var(--paper-peach); }
+.paper-illustration path:nth-child(2) { fill: #f4eff9; stroke: #b8abc6; }
+.paper-illustration path:nth-child(3) { fill: #d6c9e5; stroke: #b8abc6; }
+.paper-illustration path:nth-child(4) { fill: var(--paper-rose); stroke: #c3a8b3; }
+.paper-illustration path:nth-child(5) { stroke: #b8abc6; }
+.drop-zone>button { background: var(--paper-sage); color: #35452e; }
+.drop-zone>button:hover:not(:disabled) { background: #ceddc4; }
+.sample-notice>span { color: var(--ink-rose); }
+.highlights { color: #695779; background: #e5dff066; padding: 8px 12px; border-left: 2px solid #c3b3d5; }
+button.finish { background: var(--paper-peach); color: #62432e; }
+button.finish:hover { background: #ebcfb7; }
+::selection { background: var(--paper-rose); color: var(--text); }
+
+@media (max-width: 640px) {
+  .journey small, .journey .current small { display: none; }
+}
