@@ -69,3 +69,7 @@ Tutorial validation checks unique state/step IDs, state continuity, ordered prer
 Use `syntheticAnalysis`, `syntheticRecipe`, `syntheticTutorial`, `unavailableError`, `malformedAnalysisFixture` and `invalidRequestFixture` in tests/development. All successful fixture data is original synthetic content; no external designer/tutorial assets were copied. The fixture demonstrates ID continuity and a rigid diagonal hinge, not a full origami model or personalised analysis. Replace via explicit live implementations; never relabel the fixture as fresh generation.
 
 Changes to discriminants, fields, recipe domains or meanings require coordinated consumer updates and fixture/tests changes. Bump contractVersion for incompatible wire changes; recipeVersion tracks a specific authored recipe independently. No external provider or paid service is selected by this foundation.
+
+## T004 adapter implementation
+
+The unchanged AnalysisProvider interface is now implemented by [the local Ollama adapter](../src/server/providers/ollama.ts). See [setup, safe errors and catalog validation](ollama.md) and [actual model measurements](ollama-benchmark.md). It adds no API route or compiler; live generation and the foundation health response remain unchanged until T008 integrates the real catalog and compiler. Inputs undergo encoded signature/dimension checks; full codec handling remains with Ollama's decoder. No shared schema/recipe domain has been expanded by this adapter ticket.
