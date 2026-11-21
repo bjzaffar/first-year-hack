@@ -1,0 +1,53 @@
+name: Hackathon task
+description: A bounded task; phase and task number are added during organization.
+title: "Task outcome"
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: What should work when this is done?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: "- [ ] Observable behavior"
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and exclusions
+      description: Components/files, boundaries, and shared-file conflicts.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Issue/PR links, prerequisite outcomes, and base branch. Write None if independent.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Contracts and context
+      description: Brief, architecture, research, and agreed interfaces.
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation
+      description: Commands or manual steps and expected outcomes.
+    validations:
+      required: true
+  - type: textarea
+    id: coordination
+    attributes:
+      label: Coordination
+      value: |
+        Task ID / phase: pending organization
+        Session owner: unassigned
+        Priority: to be set
+        Shared files / environments: to be assessed

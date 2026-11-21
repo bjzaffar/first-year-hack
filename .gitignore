@@ -1,0 +1,23 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# Scratch and local worktrees
+work/
+.worktrees/
+# Common generated dependencies/artifacts; adapt during foundation
+node_modules/
+.next/
+.nuxt/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+dist/
+build/
+coverage/
+*.log
+.DS_Store
+# Commit the chosen stack's dependency lockfile.
