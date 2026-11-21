@@ -3,7 +3,7 @@
 Copy the following into the intended session and replace placeholders.
 
 ```text
-Read AGENTS.md and docs/workflow.md. You are the research/planning session for THIS event repository. Use Babar (bjzaffar) for GitHub. Do not start implementation or other sessions.
+Read AGENTS.md and docs/workflow.md. You are the research/planning session for THIS event repository. Use my own authorized GitHub account for remote actions. Do not start implementation or other sessions.
 
 Event/rules links: [provide]
 Available time, deadline/timezone, team/session capacity: [provide]
