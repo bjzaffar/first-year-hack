@@ -1,82 +1,81 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import type { CompiledTutorial } from '../shared/schemas.js';
+import { useState } from "react";
+import { FoldScene } from "./rendering/FoldScene.js";
+import { FoldDiagram } from "./rendering/FoldDiagram.js";
+import type { RenderTutorial } from "./rendering/motion.js";
 
+/** loadStep is controlled by the index prop of FoldScene; replayKey restarts it.
+ * onComplete/onError end playback. Each new index restores its saved before state. */
 export function TutorialPlayer({
   tutorial,
   onFinish,
   onBack,
 }: {
-  tutorial: CompiledTutorial;
+  tutorial: RenderTutorial;
   onFinish: () => void;
   onBack: () => void;
 }) {
-  const steps = tutorial.steps;
-  const [stepIndex, setStepIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
-
-  const currentStep = steps[stepIndex];
-  const totalSteps = steps.length;
-
-  const replay = useCallback(() => {
-    if (!currentStep || isAnimating) return;
-    setIsAnimating(true);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      setIsAnimating(false);
-      timerRef.current = null;
-    }, currentStep.animation.durationMs);
-  }, [currentStep, isAnimating]);
-
-  const next = useCallback(() => {
-    if (isAnimating || stepIndex >= totalSteps - 1) return;
-    setStepIndex(prev => prev + 1);
-    setIsAnimating(false);
-    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
-  }, [isAnimating, stepIndex, totalSteps]);
-
-  const back = useCallback(() => {
-    if (isAnimating || stepIndex <= 0) return;
-    setStepIndex(prev => prev - 1);
-    setIsAnimating(false);
-    if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
-  }, [isAnimating, stepIndex]);
-
-  const isLast = stepIndex === totalSteps - 1;
-
+  const [index, setIndex] = useState(0),
+    [replayKey, setReplayKey] = useState(0),
+    [playing, setPlaying] = useState(true);
+  const step = tutorial.steps[index];
+  const loadStep = (next: number) => {
+    setPlaying(true);
+    setIndex(next);
+  };
   return (
     <section className="tutorial-section">
       <h2>Folding tutorial</h2>
       <div className="step-header">
-        <span className="step-number">Step {stepIndex + 1} of {totalSteps}</span>
-        <span className="component-label">Sheet: {currentStep.sheetId}</span>
+        <span>
+          Step {index + 1} of {tutorial.steps.length}
+        </span>
+        <span>
+          Sheet: {step.sheetId} · Component: {step.componentId}
+        </span>
       </div>
       <div className="tutorial-layout">
-        <div className="diagram-slot" aria-label="Fold diagram">
-          <span className="slot-label">Diagram slot</span>
-          {isAnimating && <div className="animating-indicator" aria-hidden="true" />}
-        </div>
-        <div className="instruction-slot">
-          <p className="instruction-text">{currentStep.instruction}</p>
-          <p className="highlights">
-            Highlighted corners: {currentStep.highlightLandmarkIds.join(', ')}
-          </p>
-        </div>
+        <FoldScene
+          tutorial={tutorial}
+          index={index}
+          replayKey={replayKey}
+          onComplete={() => setPlaying(false)}
+          onError={() => setPlaying(false)}
+        />
+        <FoldDiagram tutorial={tutorial} index={index} />
       </div>
+      <p>{step.instruction}</p>
+      <p className="caption">
+        Dots mark relevant corners. Dashed lines mark creases; arrows show where
+        corners move.
+      </p>
+      <p aria-live="polite">
+        {playing ? "Playing fold…" : "Ready for the next step."}
+      </p>
       <div className="tutorial-controls">
-        <button className="secondary" onClick={back} disabled={stepIndex === 0 || isAnimating}>
+        <button className="secondary" onClick={onBack}>
+          Materials
+        </button>
+        <button
+          disabled={index === 0 || playing}
+          onClick={() => loadStep(index - 1)}
+        >
           Back
         </button>
-        <button className="secondary" onClick={replay} disabled={isAnimating}>
+        <button
+          disabled={playing}
+          onClick={() => {
+            setPlaying(true);
+            setReplayKey((k) => k + 1);
+          }}
+        >
           Replay
         </button>
-        <button onClick={next} disabled={isAnimating || isLast}>
-          {isLast ? 'Finish' : 'Next'}
-        </button>
-        {isLast && (
-          <button className="finish" onClick={onFinish} disabled={isAnimating}>
+        {index < tutorial.steps.length - 1 ? (
+          <button disabled={playing} onClick={() => loadStep(index + 1)}>
+            Next
+          </button>
+        ) : (
+          <button disabled={playing} onClick={onFinish}>
             Complete
           </button>
         )}
