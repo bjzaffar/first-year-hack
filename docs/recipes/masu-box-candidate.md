@@ -1,6 +1,6 @@
 # T003 candidate: generalized one-sheet Masu box
 
-Status: **candidate geometry prototype; not a registered production recipe**. The panel endpoint is dimensioned and edge-length checked. The coupled path into that endpoint, layer collision behavior, and physical folding remain unverified.
+Status: **historical endpoint spike; not a registered production recipe**. The subsequent [complete digital motion and handoff](masu-motion.md) supplies the coupled path, conservative domain and final corner closure. The endpoint checks below describe the original investigation; physical folding remains unverified.
 
 ## Provenance and scope
 
@@ -82,4 +82,4 @@ No physical fold was checked. Rabbit Ear was screened against the current gap us
 
 ## Handoff gate
 
-Before T003 can publish production schemas/fixtures or mark T005/T006 ready, derive the per-face crease graph and layer order for steps 1–7, encode each compound motion as ordered supported submotions, and inspect the moving layers and resulting geometry at both parameter limits and an interior value. The independent-wall construction fails the shared-landmark check above, so it cannot stand in for this derivation. The exact assignments must be confirmed against a paper prototype or a documented, appropriately licensed construction. Until then the candidate remains outside `RecipeIdSchema` and downstream work stays blocked.
+Historical gate, now addressed digitally by [the motion handoff](masu-motion.md); production integration and physical checks remain separate. The original investigation required the following: derive the per-face crease graph and layer order for steps 1–7, encode each compound motion as ordered supported submotions, and inspect the moving layers and resulting geometry at both parameter limits and an interior value. The independent-wall construction fails the shared-landmark check above, so it cannot stand in for this derivation. The exact assignments must be confirmed against a paper prototype or a documented, appropriately licensed construction. Until then the candidate remains outside `RecipeIdSchema` and downstream work stays blocked.

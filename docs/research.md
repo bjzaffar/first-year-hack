@@ -32,3 +32,7 @@ TBD — reference the user's scope decision and docs/brief.md.
 ## Open risks and fallback options
 
 TBD
+
+### T003 coupled motion continuation
+
+The [complete digital construction](recipes/masu-motion.md) derives a continuous whole-sheet path and final corner closure for the existing 29-face candidate, with a conservative h/l domain [0.06, 0.16]. It records original equations, source comparison, seven-value regression checks, sampled intersection checks and a standalone demonstration. Physical folding, finite-thickness behavior and beginner usability remain unverified; no Rabbit Ear adoption or fallback was needed.
