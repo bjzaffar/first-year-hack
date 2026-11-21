@@ -17,7 +17,7 @@ export function PaperBackground() {
     <Particles key={String(reducedMotion)} particleCount={300} particleColors={colors} particleBaseSize={9}
       sizeRandomness={0} speed={0.035} opacity={0.45}
       glow={0} twinkle={0} connections={false} intro={false}
-      moveParticlesOnHover hoverEffect="repel" hoverRadius={180} particleHoverFactor={0.9} clickBurst={false} disableRotation
+      moveParticlesOnHover hoverEffect="repel" hoverRadius={180} particleHoverFactor={0.45} clickBurst={false} disableRotation
       drift="up" driftSpeed={0.12} pixelRatio={1.5} paused={reducedMotion} />
   </div>;
 }
