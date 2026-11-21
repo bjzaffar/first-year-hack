@@ -1,6 +1,7 @@
 import {
   masuBoxDimensions,
   masuFlatNet,
+  masuNorthWestCornerCompatibility,
   masuNorthWallEdgeLengths,
   masuNorthWallMotion,
   masuBoxParameterSamples,
@@ -26,8 +27,11 @@ for (const wallHeightFraction of samples) {
   const upright = motionSamples.at(-1)!;
   const endpointIsCorrect = close(upright.movingVertices[2].z, dimensions.wallHeight) &&
     close(upright.movingVertices[2].y, dimensions.baseSide / 2);
+  const corner = masuNorthWestCornerCompatibility(dimensions);
+  const independentWallsRequireCompoundCollapse = close(corner.mismatch, Math.SQRT2 * dimensions.wallHeight) &&
+    corner.mismatch > 0;
   if (net.faces.length !== 17 || !netAreaCorrect || !netInsideSheet ||
-      !rigidThroughout || !axisFixed || !endpointIsCorrect) {
+      !rigidThroughout || !axisFixed || !endpointIsCorrect || !independentWallsRequireCompoundCollapse) {
     throw new Error(`Hinge invariant failed at wallHeightFraction=${wallHeightFraction}`);
   }
   console.log(JSON.stringify({
@@ -40,6 +44,7 @@ for (const wallHeightFraction of samples) {
     motionDegrees: motionSamples.map(motion => motion.angleDegrees),
     uprightWallVertices: upright.movingVertices,
     uprightEdgeLengths: masuNorthWallEdgeLengths(upright),
+    naiveNorthWestCorner: { ...corner, independentWallsRequireCompoundCollapse },
     checks: { positiveBase: dimensions.baseSide > 0, flatNetArea: netAreaCorrect, netInsideSheet,
       fixedHingeAxis: axisFixed, rigidWallThroughout: rigidThroughout, uprightEndpoint: endpointIsCorrect },
   }));

@@ -71,6 +71,7 @@ The isolated prototype is [masu-box.ts](../../src/recipes/masu-box.ts), driven b
 - `masuBoxDimensions` calculates `s`, `h`, and idealized `s²h`.
 - `MasuWallHingeOperationSchema` specifies the north-wall hinge axis and 0°→90° target.
 - `masuNorthWallMotion` returns flat, intermediate, or upright vertices for that wall; `masuNorthWallEdgeLengths` checks rigidity.
+- `masuNorthWestCornerCompatibility` measures the landmark mismatch produced by the tempting but invalid independent-walls-first construction. At a corner, the shared flat landmark `outer-nw` is predicted at `(-s/2, q, h)` by the west-wall-attached triangle and `(-q, s/2, h)` by the north-wall-attached triangle, where `q=s/2+h`. Their separation is `√2 h` for every positive wall height. This proves those two isolated 90° wall motions cannot be composed while keeping that gusset landmark intact. It does not rule out a coupled corner collapse; that coupled path remains to be derived.
 
 Observed command: `npx tsx scripts/t003-masu-spike.ts` passed for the three interior samples, including the 0°/45°/90° motion values, shared hinge axis, upright endpoint and unchanged moving-face edge lengths. The two degenerate endpoints were rejected. `npm run typecheck` passed. These checks cover one wall only. They do not check any gusset, flap, overlap, complete volume mesh, or complete tutorial state continuity.
 
@@ -78,4 +79,4 @@ No physical fold was checked. Rabbit Ear was screened against the current gap us
 
 ## Handoff gate
 
-Before T003 can publish production schemas/fixtures or mark T005/T006 ready, derive the per-face crease graph and layer order for steps 1–7, encode each compound motion as ordered supported submotions, and inspect the moving layers and resulting geometry at both parameter limits and an interior value. The exact assignments must be confirmed against a paper prototype or a documented, appropriately licensed construction. Until then the candidate remains outside `RecipeIdSchema` and downstream work stays blocked.
+Before T003 can publish production schemas/fixtures or mark T005/T006 ready, derive the per-face crease graph and layer order for steps 1–7, encode each compound motion as ordered supported submotions, and inspect the moving layers and resulting geometry at both parameter limits and an interior value. The independent-wall construction fails the shared-landmark check above, so it cannot stand in for this derivation. The exact assignments must be confirmed against a paper prototype or a documented, appropriately licensed construction. Until then the candidate remains outside `RecipeIdSchema` and downstream work stays blocked.

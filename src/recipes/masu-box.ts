@@ -280,3 +280,32 @@ export function masuNorthWallEdgeLengths(motion: NorthWallMotion): readonly numb
     return Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
   });
 }
+
+export interface CornerCompatibilityCheck {
+  /** The same flat-sheet landmark as predicted by independently raised adjacent walls. */
+  westWallPrediction: Point3;
+  northWallPrediction: Point3;
+  mismatch: number;
+}
+
+/**
+ * Check the naive walls-first corner motion. The two gusset triangles share
+ * `outer-nw` in the flat net. Raising each adjacent wall independently maps
+ * that landmark to different 3D points, so a compound gusset collapse is
+ * required before this candidate can claim a complete fold path.
+ */
+export function masuNorthWestCornerCompatibility(dimensions: MasuBoxDimensions): CornerCompatibilityCheck {
+  const { baseSide: s, wallHeight: h } = dimensions;
+  const q = s / 2 + h;
+  const westWallPrediction = { x: -s / 2, y: q, z: h };
+  const northWallPrediction = { x: -q, y: s / 2, z: h };
+  return {
+    westWallPrediction,
+    northWallPrediction,
+    mismatch: Math.hypot(
+      westWallPrediction.x - northWallPrediction.x,
+      westWallPrediction.y - northWallPrediction.y,
+      westWallPrediction.z - northWallPrediction.z,
+    ),
+  };
+}
