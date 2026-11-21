@@ -37,17 +37,17 @@ P0 foundation should be integrated before parallel implementation. Phase labels 
 
 ## Stage C: manual assignment and implementation
 
-The user opens a worktree chat and supplies an issue URL and session nickname. On starting, the worker:
+The team lead assigns an issue URL to a human teammate or an AI session. A teammate uses a local clone; parallel sessions on one computer use separate worktrees or clones. On starting, the worker:
 
 1. Reads AGENTS.md and required context; fetches current issue comments/status and prerequisite PRs.
 2. Confirms no active owner. Existing ownership is not a lease the worker can overwrite: ask the user about a conflicting/stale assignment.
-3. Records a comment: session nickname, worktree, branch, starting commit, scope, and intended checks. The user may post this comment if tooling is unavailable. A GitHub assignee is optional and does not identify a Codex session.
+3. Records a comment with human or session owner, branch, starting commit, scope, and intended checks. Include worktree only when used. The lead may post this if the worker lacks issue tooling. Assign the GitHub issue to the teammate when useful; AI sessions can use a comment to identify ownership.
 4. Changes status to in-progress, preserving phase/priority labels.
-5. Uses branch `task/12-upload-preview` (issue number plus short slug). Never run two workers in one working directory. If Codex starts detached, create a named task branch before committing/pushing.
+5. Uses branch `task/12-upload-preview` (issue number plus short slug). Never run two active workers in one working directory. An ordinary teammate clone needs only a branch; if Codex starts detached, create a named task branch before committing/pushing.
 6. Implements within scope; reports blockers in the issue and chat. On blocked, use status:blocked and state what would unblock it. Do not silently take another issue.
 7. Runs relevant checks and creates a PR targeting the documented integration branch, with `Closes #12`, acceptance evidence, limitations, and integration notes. Uses status:review while the issue remains open.
 
-If connector capabilities do not support an action, use a verified Babar-authenticated alternative when available; otherwise report the exact missing action and give the user the prepared text. Never claim a remote update occurred without a returned result.
+Use the human operator's own authorized GitHub account. GitHub CLI is optional: Git handles cloning, branching, committing, and pushing; a PR can be opened through a connected tool or the GitHub website. If tooling cannot perform a remote action, report it and provide the prepared text. Never claim a remote update without a result.
 
 ## Shared changes and environments
 
@@ -57,18 +57,24 @@ Separate worktrees still share Git metadata and external resources. Give dev ser
 
 ## Stage D: review and integration
 
-Only the designated integration session merges, after the user has instructed it to integrate the selected PRs. Review acceptance criteria, contracts, scope, and evidence; fetch current branch heads and check for new commits before acting. Merge prerequisite PRs first. Resolve conflicts without dropping another worker's changes; return substantial feature corrections to its owner when practical.
+The team lead or designated integration session reviews and coordinates merges after the lead selects the PRs. Teammates and workers do not merge their own PRs. Review acceptance criteria, contracts, scope, and evidence; fetch current branch heads and check for new commits before acting. Merge prerequisite PRs first. Resolve conflicts without dropping another worker's changes; return substantial feature corrections to its owner when practical.
 
 Run app checks and the core user journey against the combined result. Mark done only when merged and verified. If the PR's closing keyword auto-closes the issue on the default branch, still confirm the closure and label. For another integration branch, close only after the agreed completion condition is met. On failure, reopen/update the issue and record the problem. Push ordinary merge/fix commits; do not force-push shared branches.
 
-Do not delete active worktrees or branches automatically. Cleanup only after merged work is verified and the owning session has finished.
+For the lead's temporary worktrees, stop worker sessions and servers, inspect tracked, untracked, and ignored files, then remove worktrees only after merged work is verified and valuable data is preserved. Never delete a teammate's ordinary clone. Branch cleanup is separate.
 
 ## Reusing sessions
 
-Each new task gets a new branch from the current integration branch and a refreshed issue/context read. First preserve any unfinished changes and confirm the previous PR's outcome. A fresh chat is useful for unrelated work. The user assigns each new task; sessions do not automatically claim the next ticket.
+Each new task gets a new branch from current `main` and a refreshed issue/context read. First preserve unfinished changes and confirm the previous PR's outcome. Clear or start a fresh AI chat for a new ticket. The lead assigns each task; sessions do not claim the next one automatically.
 
 ## Completion and scope cuts
 
 A task is complete when its acceptance criteria work, changes are integrated, relevant checks have recorded outcomes, documentation is accurate, and limitations are explicit. Cut work is closed with a reason, not marked implemented. Keep status labels consistent with the actual issue state.
 
 Before submission, verify the deployed or local demo, seed data, access permissions, attribution, event requirements, and fallback. Deployment/submission requires the user's instruction and appropriate environment access.
+
+## Repository access and review protection
+
+The event repo is the shared source of truth. Each teammate accepts a collaborator invitation, clones the event repo once, and uses their own GitHub account. Local edits do not affect GitHub until pushed. Push ticket branches, not `main`; a PR compares the ticket branch with `main`. Download ZIP is unsuitable for the normal contribution loop because it omits Git history and the remote connection.
+
+The copied `.github/CODEOWNERS` names `@bjzaffar` as default code owner. Change it to the event lead if needed. In the event repo, protect `main` with required PRs, one approval, code owner review, and stale approval dismissal. Confirm the protection is active for the repo plan and visibility. Before code owner approval, an ordinary collaborator's merge attempt should be blocked; after approval, someone with merge rights may click Merge. Repository admins can bypass classic rules unless bypassing is disabled. When strict no-bypass is enabled, an author cannot approve their own PR, so arrange another eligible reviewer for lead-authored work.
