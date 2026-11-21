@@ -1,4 +1,5 @@
-import type { CompiledTutorial } from '../shared/schemas.js';
+import type { RenderTutorial } from "./rendering/motion.js";
+import { FoldScene } from "./rendering/FoldScene.js";
 
 export function Preview({
   tutorial,
@@ -6,7 +7,7 @@ export function Preview({
   onAccept,
   onRetry,
 }: {
-  tutorial: CompiledTutorial;
+  tutorial: RenderTutorial;
   photoDataUrl?: string;
   onAccept: () => void;
   onRetry: () => void;
@@ -25,20 +26,26 @@ export function Preview({
           </div>
         )}
         <div className="model-side">
-          <div className="model-placeholder" aria-label="Origami model preview">
-            <span className="model-label">3D preview slot</span>
-          </div>
+          <FoldScene tutorial={tutorial} />
           <p className="caption">Generated origami geometry</p>
         </div>
       </div>
       <div className="preview-details">
         <dl>
           <dt>Sheets required</dt>
-          <dd>{sheetCount} square sheet{sheetCount > 1 ? 's' : ''}</dd>
+          <dd>
+            {sheetCount} square sheet{sheetCount > 1 ? "s" : ""}
+          </dd>
           <dt>Estimated folding time</dt>
-          <dd>{estimatedMinutes} minute{estimatedMinutes !== 1 ? 's' : ''}</dd>
+          <dd>
+            {estimatedMinutes === null
+              ? "Not measured"
+              : `${estimatedMinutes} minutes`}
+          </dd>
           {tutorial.synthetic && (
-            <dd className="synthetic-note">This is a synthetic fixture, not a live generation result.</dd>
+            <dd className="synthetic-note">
+              This is a synthetic fixture, not a live generation result.
+            </dd>
           )}
         </dl>
         {tutorial.approximationNotes.length > 0 && (
@@ -54,7 +61,9 @@ export function Preview({
       </div>
       <div className="actions">
         <button onClick={onAccept}>Accept and start folding</button>
-        <button className="secondary" onClick={onRetry}>Return to crop</button>
+        <button className="secondary" onClick={onRetry}>
+          Return to crop
+        </button>
       </div>
     </section>
   );

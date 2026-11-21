@@ -1,10 +1,10 @@
-import type { CompiledTutorial } from '../shared/schemas.js';
+import type { RenderTutorial } from "./rendering/motion.js";
 
 export function Prepare({
   tutorial,
   onStart,
 }: {
-  tutorial: CompiledTutorial;
+  tutorial: RenderTutorial;
   onStart: () => void;
 }) {
   const sheets = tutorial.materials.sheets;
@@ -12,10 +12,13 @@ export function Prepare({
   return (
     <section className="prepare-section">
       <h2>Prepare your materials</h2>
-      <p>You will need {sheets.length} square sheet{sheets.length > 1 ? 's' : ''} of the same size.</p>
+      <p>
+        You will need {sheets.length} square sheet{sheets.length > 1 ? "s" : ""}{" "}
+        of the same size.
+      </p>
       {sheets.length > 1 && (
         <ul className="sheet-list">
-          {sheets.map(sheet => (
+          {sheets.map((sheet) => (
             <li key={sheet.id}>
               <strong>{sheet.id}</strong> — Component: {sheet.componentId}
             </li>

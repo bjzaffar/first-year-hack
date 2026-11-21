@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { cropPixels, type Crop } from './crop.js';
+import { CropSelection } from './CropSelection.js';
 
 export interface CroppedImage {
   dataUrl: string;
@@ -82,13 +83,16 @@ export function UploadCrop({ onCrop, onInvalidate, initialImage }: {
   }
 
   return <section className="upload-section">
-    <h2>Upload and crop a photograph</h2>
-    <p>Choose an image, then adjust the crop to isolate one object.</p>
+    <p className="section-kicker">01 / BEGIN WITH SOMETHING FAMILIAR</p>
+    <h2>What will you fold?</h2>
+    <p>Choose a photograph of an object that catches your eye.</p>
     <div className="drop-zone" onDragOver={e => e.preventDefault()} onDrop={e => {
       e.preventDefault(); const file = e.dataTransfer.files[0]; if (file) handleFile(file);
     }}>
-      <button onClick={() => input.current?.click()}>Choose image</button>
-      <span>or drop a JPEG, PNG, or WebP here (up to 10 MB)</span>
+      <svg className="paper-illustration" viewBox="0 0 160 120" fill="none" aria-hidden="true"><path d="M32 81 66 22l58 29-33 59Z" fill="#e8e1d2"/><path d="m32 81 58-19 34-11-58-29Z" fill="#fdfbf5" stroke="#c8bdab"/><path d="m32 81 58-19 1 48Z" fill="#e0d7c5" stroke="#c8bdab"/><path d="m90 62 34-11-33 59Z" fill="#f2ecdf" stroke="#c8bdab"/><path d="m66 22 24 40" stroke="#c8bdab" strokeDasharray="3 4"/></svg>
+      <p className="drop-title">Every fold starts with a little inspiration.</p>
+      <button onClick={() => input.current?.click()}>Choose a photograph <span aria-hidden="true">↗</span></button>
+      <span>or drop it here · JPG, PNG, WebP · up to 10 MB</span>
     </div>
     <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={e => {
       const file = e.target.files?.[0]; if (file) handleFile(file); e.target.value = '';
@@ -96,19 +100,12 @@ export function UploadCrop({ onCrop, onInvalidate, initialImage }: {
     {busy && <p role="status">Preparing image…</p>}
     {error && <p role="alert" className="error">{error}</p>}
     {source && <>
-      <div style={{ position: 'relative', width: 'fit-content', maxWidth: '100%' }}>
-        <img src={source} alt="Source photograph with selected crop" style={{ display: 'block', maxWidth: '100%', maxHeight: 360 }} />
-        <div aria-hidden="true" style={{ position: 'absolute', border: '2px solid #a85c30', boxSizing: 'border-box', pointerEvents: 'none',
-          left: `${crop.x}%`, top: `${crop.y}%`, width: `${crop.width}%`, height: `${crop.height}%` }} />
+      <CropSelection key={source} source={source} crop={crop} disabled={busy}
+        onChange={next => { onInvalidate(); setCrop(next); }} />
+      <div className="actions crop-actions">
+        <button disabled={busy} onClick={confirm}>Confirm crop</button>
+        <button disabled={busy} onClick={() => { onInvalidate(); setCrop({ x: 0, y: 0, width: 100, height: 100 }); }}>Reset crop</button>
       </div>
-      <fieldset disabled={busy}><legend>Crop rectangle (percent of image)</legend>
-        {(['x', 'y', 'width', 'height'] as const).map(key => <label key={key} style={{ display: 'block' }}>
-          {key} <input type="range" aria-label={`Crop ${key}`} min={key === 'width' || key === 'height' ? 1 : 0}
-            max={key === 'x' ? 100 - crop.width : key === 'y' ? 100 - crop.height : key === 'width' ? 100 - crop.x : 100 - crop.y}
-            value={crop[key]} onChange={e => { onInvalidate(); setCrop({ ...crop, [key]: Number(e.target.value) }); }} /> {crop[key]}%
-        </label>)}
-        <button onClick={confirm}>Confirm crop</button>
-      </fieldset>
     </>}
   </section>;
 }
